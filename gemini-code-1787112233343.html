@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Nuestra Boda</title>
+    
+    <!-- FUENTES ELEGANTES -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Great+Vibes&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
+    
+    <!-- ICONOS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* =========================================
+           VARIABLES EDITABLES (COLORES Y TAMAÑOS)
+           ========================================= */
+        :root {
+            --color-fondo: #fcf9f2;         
+            --color-primario: #C5A059;      
+            --color-secundario: #E8D8C3;    
+            --color-texto: #4a4a4a;         
+            --color-blanco: #ffffff;
+            
+            --fuente-titulos: 'Playfair Display', serif;
+            --fuente-nombres: 'Great Vibes', cursive;
+            --fuente-textos: 'Montserrat', sans-serif;
+            
+            --size-nombres: 4rem;
+            --size-titulos: 2rem;
+            --size-textos: 1rem;
+            
+            --radio-boton: 30px;
+        }
+
+        /* =========================================
+           ESTILOS GENERALES
+           ========================================= */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body, html {
+            background-color: var(--color-fondo);
+            color: var(--color-texto);
+            font-family: var(--fuente-textos);
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        /* =========================================
+           PANTALLA DEL SOBRE (INICIO)
+           ========================================= */
+        #envelope-screen {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100vh;
+            background-color: var(--color-fondo);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            transition: opacity 1s ease, visibility 1s;
+        }
+
+        .texto-sobre-arriba {
+            font-family: var(--fuente-titulos);
+            font-size: 1.5rem;
+            color: var(--color-primario);
+            margin-bottom: 40px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            text-align: center;
+            animation: pulse 2s infinite;
+        }
+
+        /* El Sobre */
+        .envelope-wrapper {
+            position: relative;
+            width: 320px;
+            height: 220px;
+            cursor: pointer;
+            perspective: 1000px;
+        }
+
+        .envelope {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: #d4c1a5;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+
+        .envelope::before {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0;
+            border-left: 160px solid transparent;
+            border-right: 160px solid transparent;
+            border-bottom: 110px solid var(--color-secundario);
+            z-index: 3;
+        }
+
+        .flap-top {
+            position: absolute;
+            top: 0; left: 0;
+            border-left: 160px solid transparent;
+            border-right: 160px solid transparent;
+            border-top: 130px solid #c9b394;
+            transform-origin: top;
+            transition: transform 0.8s ease, z-index 0.2s;
+            z-index: 4;
+        }
+
+        .wax-seal {
+            position: absolute;
+            top: 110px;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 50px; height: 50px;
+            background: #a3824a; 
+            border-radius: 50%;
+            z-index: 5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #ffffff;
+            font-family: var(--fuente-nombres);
+            font-size: 1.2rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3), inset 0 0 5px rgba(0,0,0,0.5);
+            transition: opacity 0.3s;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
+        /* Animación de apertura */
+        .envelope-wrapper.open .flap-top { transform: rotateX(180deg); z-index: 1; }
+        .envelope-wrapper.open .wax-seal { opacity: 0; }
+        
+        .instruccion-tocar {
+            margin-top: 50px;
+            font-size: 0.9rem;
+            color: #888;
+            font-style: italic;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.8; }
+            50% { opacity: 1; transform: scale(1.02); }
+            100% { opacity: 0.8; }
+        }
+
+        /* =========================================
+           CONTENIDO DE LA INVITACIÓN
+           ========================================= */
+        #invitation-content {
+            display: none; 
+            opacity: 0;
+            transition: opacity 1.5s ease;
+            padding-bottom: 80px;
+        }
+
+        header {
+            text-align: center;
+            padding: 80px 20px 40px;
+            background: linear-gradient(to bottom, var(--color-secundario) 0%, var(--color-fondo) 100%);
+        }
+
+        .nombres {
+            font-family: var(--fuente-nombres);
+            font-size: var(--size-nombres);
+            color: var(--color-primario);
+            margin: 20px 0;
+            line-height: 1.2;
+        }
+
+        h2 {
+            font-family: var(--fuente-titulos);
+            font-size: var(--size-titulos);
+            color: var(--color-primario);
+            margin-bottom: 20px;
+            font-weight: 400;
+        }
+
+        .fecha { font-size: 1.2rem; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 30px;}
+
+        section { padding: 40px 20px; text-align: center; max-width: 800px; margin: 0 auto; }
+
+        .divider { width: 50px; height: 2px; background-color: var(--color-primario); margin: 0 auto 30px; }
+
+        /* =========================================
+           CUENTA REGRESIVA
+           ========================================= */
+        .faltan-texto {
+            font-family: var(--fuente-titulos);
+            font-size: 1.8rem;
+            color: var(--color-primario);
+            margin-top: 90px;
+            margin-bottom: -5px; 
+            font-style: italic;
+        }
+
+        #countdown-container {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .countdown-item {
+            background-color: var(--color-blanco);
+            padding: 15px 10px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            min-width: 70px;
+        }
+
+        .countdown-number {
+            font-size: 2rem;
+            font-family: var(--fuente-titulos);
+            color: var(--color-primario);
+            display: block;
+        }
+
+        .countdown-label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            color: var(--color-texto);
+            letter-spacing: 1px;
+        }
+
+        /* =========================================
+           BOTONES
+           ========================================= */
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background-color: var(--color-primario);
+            color: var(--color-blanco);
+            text-decoration: none;
+            border-radius: var(--radio-boton);
+            font-family: var(--fuente-textos);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 10px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(197, 160, 89, 0.3);
+        }
+
+        .btn:hover { background-color: #a8874a; transform: translateY(-2px); }
+        .btn i { margin-right: 8px; }
+
+        .btn-outline {
+            background-color: transparent;
+            color: var(--color-primario);
+            border: 1px solid var(--color-primario);
+        }
+        .btn-outline:hover {
+            background-color: var(--color-primario);
+            color: var(--color-blanco);
+        }
+
+        /* =========================================
+           GALERÍA DESLIZABLE
+           ========================================= */
+        .gallery-container {
+            display: flex;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            gap: 15px;
+            padding: 20px 0;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none; 
+        }
+        .gallery-container::-webkit-scrollbar { display: none; } 
+
+        .gallery-item {
+            flex: 0 0 80%;
+            max-width: 300px;
+            scroll-snap-align: center;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            cursor: pointer;
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 350px;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.3s;
+        }
+
+        /* =========================================
+           MODALES
+           ========================================= */
+        .modal {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+        }
+
+        .modal.active { opacity: 1; visibility: visible; }
+
+        .modal-content {
+            background: var(--color-fondo);
+            padding: 40px;
+            border-radius: 15px;
+            max-width: 90%;
+            width: 400px;
+            text-align: center;
+            position: relative;
+        }
+
+        .btn-close {
+            position: absolute;
+            top: 15px; right: 20px;
+            font-size: 1.5rem;
+            color: var(--color-texto);
+            cursor: pointer;
+            background: none; border: none;
+        }
+
+        #lightbox-modal .modal-content {
+            background: transparent;
+            padding: 0; width: auto; max-width: 95%; max-height: 90%;
+        }
+        #lightbox-img {
+            max-width: 100%; max-height: 90vh; border-radius: 5px;
+        }
+        #lightbox-modal .btn-close { color: white; top: -40px; right: 0; font-size: 2rem; }
+
+        /* =========================================
+           MÚSICA FLOTANTE
+           ========================================= */
+        #music-btn {
+            position: fixed;
+            bottom: 20px; right: 20px;
+            width: 50px; height: 50px;
+            background: var(--color-primario);
+            color: white;
+            border-radius: 50%;
+            display: flex; justify-content: center; align-items: center;
+            font-size: 1.2rem;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            cursor: pointer; z-index: 999;
+            border: none;
+        }
+
+        .optional-section { display: none; }
+
+    </style>
+</head>
+<body>
+
+    <!-- REPRODUCTOR DE MÚSICA -->
+    <audio id="bg-music" loop>
+        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+    </audio>
+    <button id="music-btn" onclick="toggleMusic()" style="display: none;">
+        <i class="fas fa-volume-up"></i>
+    </button>
+
+    <!-- PANTALLA DEL SOBRE -->
+    <div id="envelope-screen">
+        <div class="texto-sobre-arriba">Invitación Especial</div>
+        <div class="envelope-wrapper" id="envelope" onclick="openInvitation()">
+            <div class="envelope"></div>
+            <div class="flap-top"></div>
+            <div class="wax-seal">A&M</div> 
+        </div>
+        <div class="instruccion-tocar">Toca el sobre para abrir</div>
+    </div>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <div id="invitation-content">
+        
+        <header>
+            <p>¡Nos Casamos!</p>
+            <div class="nombres">Andrea<br>&<br>Martín</div>
+            <p class="fecha">Sábado 15 de Noviembre, 2027</p>
+            <p>Queremos compartir este momento tan especial contigo.</p>
+            
+            <!-- CUENTA REGRESIVA -->
+            <p class="faltan-texto">Faltan</p>
+            <div id="countdown-container">
+                <div class="countdown-item">
+                    <span class="countdown-number" id="days">00</span>
+                    <span class="countdown-label">Días</span>
+                </div>
+                <div class="countdown-item">
+                    <span class="countdown-number" id="hours">00</span>
+                    <span class="countdown-label">Hs</span>
+                </div>
+                <div class="countdown-item">
+                    <span class="countdown-number" id="minutes">00</span>
+                    <span class="countdown-label">Min</span>
+                </div>
+                <div class="countdown-item">
+                    <span class="countdown-number" id="seconds">00</span>
+                    <span class="countdown-label">Seg</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- UBICACIÓN -->
+        <section id="ubicacion">
+            <h2>Ubicación</h2>
+            <div class="divider"></div>
+            <i class="fas fa-map-marked-alt" style="font-size: 2.5rem; color: var(--color-primario); margin-bottom: 25px; display: block;"></i>
+            
+            <h3 style="margin-bottom: 10px; font-family: var(--fuente-titulos);">Ceremonia Religiosa</h3>
+            <p style="margin-bottom: 5px; font-size: 1rem; font-weight: 500;">Parroquia San José</p>
+            <p style="margin-bottom: 5px; font-size: 0.9rem; color: #666;">Av. Principal 1234, Montevideo</p>
+            <p style="margin-bottom: 20px; font-size: 0.95rem; font-weight: 500;"><i class="far fa-clock" style="color: var(--color-primario);"></i> 17:00 hs.</p>
+            <a href="https://maps.google.com" target="_blank" class="btn btn-outline"><i class="fas fa-church"></i> Mapa Ceremonia</a>
+            
+            <div style="margin: 40px 0;"></div>
+
+            <h3 style="margin-bottom: 10px; font-family: var(--fuente-titulos);">Fiesta y Celebración</h3>
+            <p style="margin-bottom: 5px; font-size: 1rem; font-weight: 500;">Salón El Ensueño</p>
+            <p style="margin-bottom: 5px; font-size: 0.9rem; color: #666;">Ruta Nacional Km 45, Montevideo</p>
+            <p style="margin-bottom: 20px; font-size: 0.95rem; font-weight: 500;"><i class="far fa-clock" style="color: var(--color-primario);"></i> 19:00 hs.</p>
+            <a href="https://maps.google.com" target="_blank" class="btn btn-outline"><i class="fas fa-map-marker-alt"></i> Mapa Fiesta</a>
+        </section>
+
+        <!-- DRESS CODE -->
+        <section style="background-color: var(--color-secundario); padding: 60px 20px;">
+            <h2>Dress Code</h2>
+            <div class="divider"></div>
+            <!-- ICONO DE PERCHA EN SVG PARA ASEGURAR QUE SE MUESTRE -->
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" style="width: 2.5rem; height: 2.5rem; fill: var(--color-primario); margin: 0 auto 15px auto; display: block;">
+                <path d="M12,2A2,2 0 0,1 14,4C14,4.74 13.6,5.39 13,5.73L21.5,10.16C22.4,10.63 23,11.59 23,12.6V14A1,1 0 0,1 22,15H2A1,1 0 0,1 1,14V12.6C1,11.59 1.6,10.63 2.5,10.16L11,5.73C10.4,5.39 10,4.74 10,4A2,2 0 0,1 12,2M12,4A0.5,0.5 0 0,0 11.5,4.5A0.5,0.5 0 0,0 12,5A0.5,0.5 0 0,0 12.5,4.5A0.5,0.5 0 0,0 12,4M3,13H21V12.6C21,12 20.6,11.41 20.08,11.13L12,6.91L3.92,11.13C3.4,11.41 3,12 3,12.6V13Z" />
+            </svg>
+            <p style="font-weight: 500; font-size: 1.2rem;">Elegante / Formal</p>
+            <p style="font-size: 0.9rem; margin-top: 10px;">Nos encantaría verte lucir espectacular.</p>
+        </section>
+
+        <!-- GALERÍA -->
+        <section id="galeria">
+            <h2>Nuestros Momentos</h2>
+            <div class="divider"></div>
+            <i class="fas fa-camera-retro" style="font-size: 2.5rem; color: var(--color-primario); margin-bottom: 25px; display: block;"></i>
+            
+            <div class="gallery-container">
+                <div class="gallery-item" onclick="openLightbox('https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=800&auto=format&fit=crop')">
+                    <img src="https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=400&auto=format&fit=crop" alt="Foto 1">
+                </div>
+                <div class="gallery-item" onclick="openLightbox('https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=800&auto=format&fit=crop')">
+                    <img src="https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=400&auto=format&fit=crop" alt="Foto 2">
+                </div>
+                <div class="gallery-item" onclick="openLightbox('https://images.unsplash.com/photo-1583939003579-730e3918a45a?q=80&w=800&auto=format&fit=crop')">
+                    <img src="https://images.unsplash.com/photo-1583939003579-730e3918a45a?q=80&w=400&auto=format&fit=crop" alt="Foto 3">
+                </div>
+                <div class="gallery-item" onclick="openLightbox('https://images.unsplash.com/photo-1606800052052-a08af7148866?q=80&w=800&auto=format&fit=crop')">
+                    <img src="https://images.unsplash.com/photo-1606800052052-a08af7148866?q=80&w=400&auto=format&fit=crop" alt="Foto 4">
+                </div>
+                <div class="gallery-item" onclick="openLightbox('https://images.unsplash.com/photo-1520854221256-17451cc331bf?q=80&w=800&auto=format&fit=crop')">
+                    <img src="https://images.unsplash.com/photo-1520854221256-17451cc331bf?q=80&w=400&auto=format&fit=crop" alt="Foto 5">
+                </div>
+                <div class="gallery-item" onclick="openLightbox('https://images.unsplash.com/photo-1469334031218-e382a71b716b?q=80&w=800&auto=format&fit=crop')">
+                    <img src="https://images.unsplash.com/photo-1469334031218-e382a71b716b?q=80&w=400&auto=format&fit=crop" alt="Foto 6">
+                </div>
+            </div>
+            <p style="font-size: 0.8rem; margin-top: 10px; color: #888;">Desliza para ver más</p>
+        </section>
+
+        <!-- SECCIONES OPCIONALES -->
+        <section id="seccion-canciones" class="optional-section" style="background-color: var(--color-secundario); padding: 40px 20px;">
+            <h2>Música</h2>
+            <div class="divider"></div>
+            <i class="fas fa-music" style="font-size: 2.5rem; color: var(--color-primario); margin-bottom: 15px; display: block;"></i>
+            <p style="margin-bottom: 20px;">¿Qué canción no puede faltar en la pista?</p>
+            <a href="#" target="_blank" class="btn btn-outline"><i class="fab fa-spotify"></i> Sugerir Canción</a>
+        </section>
+
+        <section id="seccion-album" class="optional-section">
+            <h2>Álbum Colaborativo</h2>
+            <div class="divider"></div>
+            <i class="fas fa-images" style="font-size: 2.5rem; color: var(--color-primario); margin-bottom: 15px; display: block;"></i>
+            <p style="margin-bottom: 20px;">Ayúdanos a capturar cada momento subiendo tus fotos.</p>
+            <a href="#" target="_blank" class="btn"><i class="fas fa-camera"></i> Subir Fotos</a>
+        </section>
+
+        <!-- REGALO -->
+        <section id="regalo">
+            <h2>Regalos</h2>
+            <div class="divider"></div>
+            <i class="fas fa-gift" style="font-size: 2.5rem; color: var(--color-primario); margin-bottom: 15px; display: block;"></i>
+            <p style="margin-bottom: 20px; font-size: 0.95rem;">El mejor regalo es tu presencia. Si deseas hacernos un obsequio, puedes hacerlo aquí.</p>
+            <button class="btn" onclick="openModal('gift-modal')"><i class="fas fa-credit-card"></i> Datos Bancarios</button>
+        </section>
+
+        <!-- RSVP -->
+        <section style="background-color: var(--color-secundario); padding: 60px 20px; margin-bottom: 0;">
+            <h2>Confirmación</h2>
+            <div class="divider"></div>
+            <i class="fas fa-calendar-check" style="font-size: 2.5rem; color: var(--color-primario); margin-bottom: 15px; display: block;"></i>
+            <p style="margin-bottom: 20px;">Por favor, confirma tu asistencia antes del 1 de Noviembre.</p>
+            <a href="https://forms.google.com" target="_blank" class="btn"><i class="fas fa-envelope-open-text"></i> Confirmar Asistencia</a>
+        </section>
+        
+        <footer style="text-align: center; padding: 60px 20px; font-family: var(--fuente-nombres); font-size: 3rem; color: var(--color-primario);">
+            ¡Te esperamos!
+        </footer>
+
+    </div>
+
+    <!-- MODALES -->
+    <div id="gift-modal" class="modal">
+        <div class="modal-content">
+            <button class="btn-close" onclick="closeModal('gift-modal')"><i class="fas fa-times"></i></button>
+            <h2 style="margin-top: 10px;">Datos Bancarios</h2>
+            <div class="divider"></div>
+            <div style="text-align: left; font-size: 0.9rem; line-height: 1.6;">
+                <p><strong>Banco:</strong> Banco Ejemplo</p>
+                <p><strong>Cuenta:</strong> 1234567890</p>
+                <p><strong>CBU / CLABE:</strong> 000000000000000000</p>
+                <p><strong>Alias:</strong> boda.andrea.martin</p>
+                <p><strong>Titular:</strong> Martín Pérez</p>
+            </div>
+            <button class="btn" style="margin-top: 25px; padding: 8px 20px;" onclick="closeModal('gift-modal')">Cerrar</button>
+        </div>
+    </div>
+
+    <div id="lightbox-modal" class="modal">
+        <div class="modal-content">
+            <button class="btn-close" onclick="closeLightbox()"><i class="fas fa-times"></i></button>
+            <img id="lightbox-img" src="" alt="Imagen ampliada">
+        </div>
+    </div>
+
+    <script>
+        const CONFIG = {
+            mostrarCanciones: true, 
+            mostrarAlbumFotos: true  
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if(CONFIG.mostrarCanciones) {
+                document.getElementById('seccion-canciones').style.display = 'block';
+            }
+            if(CONFIG.mostrarAlbumFotos) {
+                document.getElementById('seccion-album').style.display = 'block';
+            }
+            iniciarCuentaRegresiva(); 
+        });
+
+        function iniciarCuentaRegresiva() {
+            const fechaBoda = new Date(2027, 10, 15, 17, 0, 0).getTime();
+
+            const intervalo = setInterval(function() {
+                const ahora = new Date().getTime();
+                const distancia = fechaBoda - ahora;
+
+                const dias = Math.floor(distancia / (1000 * 60 * 60 * 24));
+                const horas = Math.floor((distancia % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutos = Math.floor((distancia % (1000 * 60 * 60)) / (1000 * 60));
+                const segundos = Math.floor((distancia % (1000 * 60)) / 1000);
+
+                document.getElementById("days").innerText = dias < 10 ? "0" + dias : dias;
+                document.getElementById("hours").innerText = horas < 10 ? "0" + horas : horas;
+                document.getElementById("minutes").innerText = minutos < 10 ? "0" + minutos : minutos;
+                document.getElementById("seconds").innerText = segundos < 10 ? "0" + segundos : segundos;
+
+                if (distancia < 0) {
+                    clearInterval(intervalo);
+                    document.getElementById("countdown-container").innerHTML = "<h3 style='font-family: var(--fuente-titulos); color: var(--color-primario);'>¡Llegó el gran día!</h3>";
+                }
+            }, 1000);
+        }
+
+        const audio = document.getElementById('bg-music');
+        const musicBtn = document.getElementById('music-btn');
+        let isPlaying = false;
+
+        function openInvitation() {
+            const envelopeScreen = document.getElementById('envelope-screen');
+            const envelopeWrapper = document.getElementById('envelope');
+            const content = document.getElementById('invitation-content');
+
+            envelopeWrapper.classList.add('open');
+
+            audio.play().then(() => {
+                isPlaying = true;
+                musicBtn.style.display = 'flex';
+                musicBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
+            }).catch(e => console.log("Autoplay evitado por el navegador."));
+
+            setTimeout(() => {
+                envelopeScreen.style.opacity = '0';
+                setTimeout(() => {
+                    envelopeScreen.style.visibility = 'hidden';
+                    envelopeScreen.style.display = 'none';
+                    content.style.display = 'block';
+                    setTimeout(() => {
+                        content.style.opacity = '1';
+                    }, 50);
+                }, 1000);
+            }, 1200); 
+        }
+
+        function toggleMusic() {
+            if (isPlaying) {
+                audio.pause();
+                musicBtn.innerHTML = '<i class="fas fa-volume-mute"></i>';
+            } else {
+                audio.play();
+                musicBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
+            }
+            isPlaying = !isPlaying;
+        }
+
+        function openModal(id) {
+            document.getElementById(id).classList.add('active');
+            history.pushState({ modal: id }, "", "#" + id);
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('active');
+        }
+
+        function openLightbox(src) {
+            document.getElementById('lightbox-img').src = src;
+            openModal('lightbox-modal');
+        }
+
+        function closeLightbox() {
+            closeModal('lightbox-modal');
+        }
+
+        window.addEventListener('popstate', function(event) {
+            const modalesActivos = document.querySelectorAll('.modal.active');
+            modalesActivos.forEach(modal => {
+                modal.classList.remove('active');
+            });
+        });
+
+    </script>
+</body>
+</html>
