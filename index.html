@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Nuestra Boda</title>
+    
+    <!-- FUENTES ELEGANTES -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Great+Vibes&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
+    
+    <!-- ICONOS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* =========================================
+           VARIABLES EDITABLES (COLORES Y TAMAÑOS)
+           ========================================= */
+        :root {
+            --color-fondo: #fcf9f2;         
+            --color-primario: #C5A059;      
+            --color-secundario: #E8D8C3;    
+            --color-texto: #4a4a4a;         
+            --color-blanco: #ffffff;
+            
+            --fuente-titulos: 'Playfair Display', serif;
+            --fuente-nombres: 'Great Vibes', cursive;
+            --fuente-textos: 'Montserrat', sans-serif;
+            
+            --size-nombres: 4rem;
+            --size-titulos: 2.2rem;
+            --size-textos: 1rem;
+            
+            --radio-boton: 30px;
+        }
+
+        /* =========================================
+           ESTILOS GENERALES
+           ========================================= */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body, html {
+            background-color: var(--color-fondo);
+            /* Agregado degradado sutil de fondo para elegancia */
+            background-image: radial-gradient(circle at top center, #ffffff 0%, transparent 60%),
+                              radial-gradient(circle at bottom center, rgba(232,216,195,0.4) 0%, transparent 60%);
+            color: var(--color-texto);
+            font-family: var(--fuente-textos);
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        /* =========================================
+           PANTALLA DEL SOBRE (INICIO)
+           ========================================= */
+        #envelope-screen {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100vh;
+            /* Fondo elegante con textura radial */
+            background: radial-gradient(circle, #ffffff 0%, var(--color-fondo) 40%, #e2ceb3 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            transition: opacity 1s ease, visibility 1s;
+        }
+
+        .texto-sobre-arriba {
+            font-family: var(--fuente-titulos);
+            font-size: 1.5rem;
+            color: var(--color-primario);
+            margin-bottom: 40px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            text-align: center;
+            animation: pulse 2s infinite;
+            text-shadow: 0 2px 4px rgba(197, 160, 89, 0.2);
+        }
+
+        /* El Sobre */
+        .envelope-wrapper {
+            position: relative;
+            width: 320px;
+            height: 220px;
+            cursor: pointer;
+            perspective: 1000px;
+        }
+
+        .envelope {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: #d4c1a5;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+            border-radius: 3px;
+        }
+
+        .envelope::before {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0;
+            border-left: 160px solid transparent;
+            border-right: 160px solid transparent;
+            border-bottom: 110px solid var(--color-secundario);
+            z-index: 3;
+        }
+
+        .flap-top {
+            position: absolute;
+            top: 0; left: 0;
+            border-left: 160px solid transparent;
+            border-right: 160px solid transparent;
+            border-top: 130px solid #c9b394;
+            transform-origin: top;
+            transition: transform 0.8s ease, z-index 0.2s;
+            z-index: 4;
+            /* Sutil textura en la solapa */
+            background-image: linear-gradient(to bottom, rgba(255,255,255,0.05), transparent);
+        }
+
+        .wax-seal {
+            position: absolute;
+            top: 110px;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 55px; height: 55px;
+            background: radial-gradient(circle at 30% 30%, #b8985a, #8c6e3b); 
+            border-radius: 50%;
+            z-index: 5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #ffffff;
+            font-family: var(--fuente-nombres);
+            font-size: 1.4rem;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.4), inset 0 0 8px rgba(0,0,0,0.6);
+            transition: opacity 0.3s;
+            overflow: hidden;
+            white-space: nowrap;
+            border: 2px solid rgba(255,255,255,0.1);
+        }
+
+        /* Animación de apertura */
+        .envelope-wrapper.open .flap-top { transform: rotateX(180deg); z-index: 1; }
+        .envelope-wrapper.open .wax-seal { opacity: 0; }
+        
+        .instruccion-tocar {
+            margin-top: 50px;
+            font-size: 0.9rem;
+            color: #777;
+            font-style: italic;
+            letter-spacing: 1px;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.8; }
+            50% { opacity: 1; transform: scale(1.02); }
+            100% { opacity: 0.8; }
+        }
+
+        /* =========================================
+           CONTENIDO DE LA INVITACIÓN
+           ========================================= */
+        #invitation-content {
+            display: none; 
+            opacity: 0;
+            transition: opacity 1.5s ease;
+            padding-bottom: 80px;
+        }
+
+        header {
+            text-align: center;
+            padding: 80px 20px 60px;
+            /* Degradado superior elegante */
+            background: radial-gradient(ellipse at top center, rgba(232,216,195,0.8) 0%, transparent 70%);
+        }
+
+        .nombres {
+            font-family: var(--fuente-nombres);
+            font-size: var(--size-nombres);
+            color: var(--color-primario);
+            margin: 20px 0;
+            line-height: 1.1;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.05);
+        }
+
+        h2 {
+            font-family: var(--fuente-titulos);
+            font-size: var(--size-titulos);
+            color: var(--color-primario);
+            margin-bottom: 20px;
+            font-weight: 400;
+        }
+
+        .fecha { font-size: 1.2rem; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 30px; font-weight: 500;}
+
+        section { padding: 50px 20px; text-align: center; max-width: 800px; margin: 0 auto; }
+
+        .fondo-secundario {
+            background-color: var(--color-secundario);
+            background-image: linear-gradient(135deg, rgba(255,255,255,0.3) 0%, transparent 100%);
+            border-top: 1px solid rgba(197, 160, 89, 0.15);
+            border-bottom: 1px solid rgba(197, 160, 89, 0.15);
+            box-shadow: inset 0 0 20px rgba(255,255,255,0.2);
+        }
+
+        /* Divisor elegante con rombo central */
+        .divider { 
+            width: 80px; 
+            height: 1px; 
+            background-color: var(--color-primario); 
+            margin: 0 auto 35px; 
+            position: relative;
+        }
+        .divider::after {
+            content: '♦';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: var(--color-primario);
+            font-size: 12px;
+            background: var(--color-fondo); 
+            padding: 0 8px;
+        }
+        .fondo-secundario .divider::after {
+            background: var(--color-secundario); /* Ajuste para que coincida con el fondo */
+        }
+
+        /* =========================================
+           CUENTA REGRESIVA
+           ========================================= */
+        .faltan-texto {
+            font-family: var(--fuente-titulos);
+            font-size: 1.8rem;
+            color: var(--color-primario);
+            margin-top: 70px;
+            margin-bottom: -5px; 
+            font-style: italic;
+        }
+
+        #countdown-container {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .countdown-item {
+            background: linear-gradient(145deg, #ffffff, #fdfbf7);
+            padding: 15px 10px;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(197, 160, 89, 0.1);
+            border: 1px solid rgba(197, 160, 89, 0.2);
+            min-width: 75px;
+        }
+
+        .countdown-number {
+            font-size: 2.2rem;
+            font-family: var(--fuente-titulos);
+            color: var(--color-primario);
+            display: block;
+        }
+
+        .countdown-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: var(--color-texto);
+            letter-spacing: 1.5px;
+            font-weight: 500;
+        }
+
+        /* =========================================
+           BOTONES
+           ========================================= */
+        .btn {
+            display: inline-block;
+            padding: 12px 32px;
+            background: linear-gradient(135deg, var(--color-primario), #a8874a);
+            color: var(--color-blanco);
+            text-decoration: none;
+            border-radius: var(--radio-boton);
+            font-family: var(--fuente-textos);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 10px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 15px rgba(197, 160, 89, 0.3);
+        }
+
+        .btn:hover { 
+            background: linear-gradient(135deg, #a8874a, var(--color-primario));
+            transform: translateY(-3px); 
+            box-shadow: 0 8px 20px rgba(197, 160, 89, 0.4);
+        }
+        .btn i { margin-right: 8px; }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--color-primario);
+            border: 1px solid var(--color-primario);
+            box-shadow: none;
+        }
+        .btn-outline:hover {
+            background: var(--color-primario);
+            color: var(--color-blanco);
+            box-shadow: 0 6px 15px rgba(197, 160, 89, 0.3);
+        }
+
+        /* =========================================
+           GALERÍA DESLIZABLE
+           ========================================= */
+        .gallery-container {
+            display: flex;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            gap: 20px;
+            padding: 20px 10px;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none; 
+        }
+        .gallery-container::-webkit-scrollbar { display: none; } 
+
+        .gallery-item {
+            flex: 0 0 80%;
+            max-width: 300px;
+            scroll-snap-align: center;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+            cursor: pointer;
+            border: 3px solid #ffffff; /* Marco de foto elegante */
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 380px;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.5s ease;
+        }
+        
+        .gallery-item:hover img {
+            transform: scale(1.05);
+        }
+
+        /* =========================================
+           MODALES
+           ========================================= */
+        .modal {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(5px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.4s ease, visibility 0.4s;
+        }
+
+        .modal.active { opacity: 1; visibility: visible; }
+
+        .modal-content {
+            background: var(--color-fondo);
+            padding: 40px;
+            border-radius: 15px;
+            max-width: 90%;
+            width: 400px;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+            border: 1px solid rgba(197, 160, 89, 0.3);
+        }
+
+        .btn-close {
+            position: absolute;
+            top: 15px; right: 20px;
+            font-size: 1.5rem;
+            color: var(--color-texto);
+            cursor: pointer;
+            background: none; border: none;
+            transition: color 0.3s;
+        }
+        .btn-close:hover { color: var(--color-primario); }
+
+        #lightbox-modal .modal-content {
+            background: transparent;
+            padding: 0; width: auto; max-width: 95%; max-height: 90%;
+            box-shadow: none; border: none;
+        }
+        #lightbox-img {
+            max-width: 100%; max-height: 90vh; border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            border: 3px solid #fff;
+        }
+        #lightbox-modal .btn-close { color: white; top: -45px; right: 0; font-size: 2rem; }
+
+        /* =========================================
+           MÚSICA FLOTANTE
+           ========================================= */
+        #music-btn {
+            position: fixed;
+            bottom: 25px; right: 25px;
+            width: 55px; height: 55px;
+            background: linear-gradient(135deg, var(--color-primario), #a8874a);
+            color: white;
+            border-radius: 50%;
+            display: flex; justify-content: center; align-items: center;
+            font-size: 1.3rem;
+            box-shadow: 0 6px 15px rgba(197, 160, 89, 0.4);
+            cursor: pointer; z-index: 999;
+            border: none;
+            transition: transform 0.3s ease;
+        }
+        #music-btn:hover { transform: scale(1.1); }
+
+        .optional-section { display: none; }
+
+    </style>
+</head>
+<body>
+
+    <!-- REPRODUCTOR DE MÚSICA -->
+    <audio id="bg-music" loop>
+        <source src="musica.mp3" type="audio/mpeg">
+    </audio>
+    <button id="music-btn" onclick="toggleMusic()" style="display: none;">
+        <i class="fas fa-volume-up"></i>
+    </button>
+
+    <!-- PANTALLA DEL SOBRE -->
+    <div id="envelope-screen">
+        <div class="texto-sobre-arriba">Invitación Especial</div>
+        <div class="envelope-wrapper" id="envelope" onclick="openInvitation()">
+            <div class="envelope"></div>
+            <div class="flap-top"></div>
+            <div class="wax-seal">A&M</div> 
+        </div>
+        <div class="instruccion-tocar">Toca el sobre para abrir</div>
+    </div>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <div id="invitation-content">
+        
+        <header>
+            <p style="font-style: italic; color: #777;">¡Nos Casamos!</p>
+            <div class="nombres">Andrea<br>&<br>Martín</div>
+            <p class="fecha">Sábado 15 de Noviembre, 2026</p>
+            <p style="font-weight: 300;">Queremos compartir este momento tan especial contigo.</p>
+            
+            <!-- CUENTA REGRESIVA -->
+            <p class="faltan-texto">Faltan</p>
+            <div id="countdown-container">
+                <div class="countdown-item">
+                    <span class="countdown-number" id="days">00</span>
+                    <span class="countdown-label">Días</span>
+                </div>
+                <div class="countdown-item">
+                    <span class="countdown-number" id="hours">00</span>
+                    <span class="countdown-label">Horas</span>
+                </div>
+                <div class="countdown-item">
+                    <span class="countdown-number" id="minutes">00</span>
+                    <span class="countdown-label">Min.</span>
+                </div>
+                <div class="countdown-item">
+                    <span class="countdown-number" id="seconds">00</span>
+                    <span class="countdown-label">Seg.</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- UBICACIÓN -->
+        <section id="ubicacion">
+            <h2>Ubicación</h2>
+            <div class="divider"></div>
+            <i class="fas fa-map-marked-alt" style="font-size: 2.5rem; color: var(--color-primario); margin-bottom: 25px; display: block;"></i>
+            
+            <h3 style="margin-bottom: 10px; font-family: var(--fuente-titulos); color: #333;">Ceremonia Religiosa</h3>
+            <p style="margin-bottom: 5px; font-size: 1rem; font-weight: 500;">Parroquia San José</p>
+            <p style="margin-bottom: 5px; font-size: 0.9rem; color: #666;">Av. Las Flores 1234, Montevideo</p>
+            <p style="margin-bottom: 20px; font-size: 0.95rem; font-weight: 500;"><i class="far fa-clock" style="color: var(--color-primario);"></i> 17:00 hs.</p>
+            <a href="https://maps.google.com" target="_blank" class="btn btn-outline"><i class="fas fa-church"></i> Mapa Ceremonia</a>
+            
+            <div style="margin: 50px 0;"></div>
+
+            <h3 style="margin-bottom: 10px; font-family: var(--fuente-titulos); color: #333;">Fiesta y Celebración</h3>
+            <p style="margin-bottom: 5px; font-size: 1rem; font-weight: 500;">Salón El Ensueño</p>
+            <p style="margin-bottom: 5px; font-size: 0.9rem; color: #666;">Ruta 101 Km 45, Montevideo</p>
+            <p style="margin-bottom: 20px; font-size: 0.95rem; font-weight: 500;"><i class="far fa-clock" style="color: var(--color-primario);"></i> 19:00 hs.</p>
+            <a href="https://maps.google.com" target="_blank" class="btn btn-outline"><i class="fas fa-map-marker-alt"></i> Mapa Fiesta</a>
+        </section>
+
+        <!-- DRESS CODE -->
+        <section class="fondo-secundario">
+            <h2>Dress Code</h2>
+            <div class="divider"></div>
+            <!-- ICONO DE PERCHA EN SVG PARA ASEGURAR QUE SE MUESTRE -->
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" style="width: 2.5rem; height: 2.5rem; fill: var(--color-primario); margin: 0 auto 15px auto; display: block;">
+                <path d="M12,2A2,2 0 0,1 14,4C14,4.74 13.6,5.39 13,5.73L21.5,10.16C22.4,10.63 23,11.59 23,12.6V14A1,1 0 0,1 22,15H2A1,1 0 0,1 1,14V12.6C1,11.59 1.6,10.63 2.5,10.16L11,5.73C10.4,5.39 10,4.74 10,4A2,2 0 0,1 12,2M12,4A0.5,0.5 0 0,0 11.5,4.5A0.5,0.5 0 0,0 12,5A0.5,0.5 0 0,0 12.5,4.5A0.5,0.5 0 0,0 12,4M3,13H21V12.6C21,12 20.6,11.41 20.08,11.13L12,6.91L3.92,11.13C3.4,11.41 3,12 3,12.6V13Z" />
+            </svg>
+            <p style="font-weight: 500; font-size: 1.3rem; letter-spacing: 1px;">Elegante / Formal</p>
+            <p style="font-size: 0.9rem; margin-top: 10px; font-weight: 300;">Nos encantaría verte lucir espectacular.</p>
+        </section>
+
+        <!-- GALERÍA -->
+        <section id="galeria">
+            <h2>Nuestros Momentos</h2>
+            <div class="divider"></div>
+            <i class="fas fa-camera-retro" style="font-size: 2.5rem; color: var(--color-primario); margin-bottom: 25px; display: block;"></i>
+            
+            <div class="gallery-container">
+                <div class="gallery-item" onclick="openLightbox('foto1.jpg')">
+                    <img src="foto1.jpg" alt="Foto 1">
+                </div>
+                <div class="gallery-item" onclick="openLightbox('foto2.jpg')">
+                    <img src="foto2.jpg" alt="Foto 2">
+                </div>
+                <div class="gallery-item" onclick="openLightbox('foto3.jpg')">
+                    <img src="foto3.jpg" alt="Foto 3">
+                </div>
+                <div class="gallery-item" onclick="openLightbox('foto4.jpg')">
+                    <img src="foto4.jpg" alt="Foto 4">
+                </div>
+                <div class="gallery-item" onclick="openLightbox('foto5.jpg')">
+                    <img src="foto5.jpg" alt="Foto 5">
+                </div>
+                <div class="gallery-item" onclick="openLightbox('foto6.jpg')">
+                    <img src="foto6.jpg" alt="Foto 6">
+                </div>
+            </div>
+            <p style="font-size: 0.85rem; margin-top: 15px; color: #888; font-style: italic;">Desliza para ver más</p>
+        </section>
+
+        <!-- SECCIONES OPCIONALES -->
+        <section id="seccion-canciones" class="optional-section fondo-secundario">
+            <h2>Música</h2>
+            <div class="divider"></div>
+            <i class="fas fa-music" style="font-size: 2.5rem; color: var(--color-primario); margin-bottom: 15px; display: block;"></i>
+            <p style="margin-bottom: 25px; font-weight: 300;">¿Qué canción no puede faltar en la pista?</p>
+            <a href="#" target="_blank" class="btn btn-outline"><i class="fab fa-spotify"></i> Sugerir Canción</a>
+        </section>
+
+        <section id="seccion-album" class="optional-section">
+            <h2>Álbum Colaborativo</h2>
+            <div class="divider"></div>
+            <i class="fas fa-images" style="font-size: 2.5rem; color: var(--color-primario); margin-bottom: 15px; display: block;"></i>
+            <p style="margin-bottom: 25px; font-weight: 300;">Ayúdanos a capturar cada momento subiendo tus fotos.</p>
+            <a href="#" target="_blank" class="btn"><i class="fas fa-camera"></i> Subir Fotos</a>
+        </section>
+
+        <!-- REGALO -->
+        <section id="regalo">
+            <h2>Regalos</h2>
+            <div class="divider"></div>
+            <i class="fas fa-gift" style="font-size: 2.5rem; color: var(--color-primario); margin-bottom: 20px; display: block;"></i>
+            <p style="margin-bottom: 25px; font-size: 0.95rem; line-height: 1.6; font-weight: 300;">El mejor regalo es tu presencia.<br>Si deseas hacernos un obsequio, puedes hacerlo aquí.</p>
+            <button class="btn" onclick="openModal('gift-modal')"><i class="fas fa-credit-card"></i> Datos Bancarios</button>
+        </section>
+
+        <!-- RSVP -->
+        <section class="fondo-secundario" style="margin-bottom: 0;">
+            <h2>Confirmación</h2>
+            <div class="divider"></div>
+            <i class="fas fa-calendar-check" style="font-size: 2.5rem; color: var(--color-primario); margin-bottom: 20px; display: block;"></i>
+            <p style="margin-bottom: 25px; font-weight: 300;">Por favor, confirma tu asistencia antes del 1 de Noviembre.</p>
+            <a href="https://forms.google.com" target="_blank" class="btn"><i class="fas fa-envelope-open-text"></i> Confirmar Asistencia</a>
+        </section>
+        
+        <footer style="text-align: center; padding: 70px 20px; font-family: var(--fuente-nombres); font-size: 3.5rem; color: var(--color-primario); text-shadow: 1px 1px 3px rgba(0,0,0,0.05);">
+            ¡Te esperamos!
+        </footer>
+
+    </div>
+
+    <!-- MODALES -->
+    <div id="gift-modal" class="modal">
+        <div class="modal-content">
+            <button class="btn-close" onclick="closeModal('gift-modal')"><i class="fas fa-times"></i></button>
+            <h2 style="margin-top: 10px;">Datos Bancarios</h2>
+            <div class="divider"></div>
+            <div style="text-align: left; font-size: 0.95rem; line-height: 1.8; color: #444;">
+                <p><strong>Banco:</strong> Banco Ejemplo</p>
+                <p><strong>Cuenta:</strong> 1234567890</p>
+                <p><strong>Alias:</strong> boda.andrea.martin</p>
+                <p><strong>Titular:</strong> Martín Pérez</p>
+            </div>
+            <button class="btn" style="margin-top: 30px; padding: 10px 25px;" onclick="closeModal('gift-modal')">Cerrar</button>
+        </div>
+    </div>
+
+    <div id="lightbox-modal" class="modal">
+        <div class="modal-content">
+            <button class="btn-close" onclick="closeLightbox()"><i class="fas fa-times"></i></button>
+            <img id="lightbox-img" src="" alt="Imagen ampliada">
+        </div>
+    </div>
+
+    <script>
+        const CONFIG = {
+            mostrarCanciones: true, 
+            mostrarAlbumFotos: true  
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if(CONFIG.mostrarCanciones) {
+                document.getElementById('seccion-canciones').style.display = 'block';
+            }
+            if(CONFIG.mostrarAlbumFotos) {
+                document.getElementById('seccion-album').style.display = 'block';
+            }
+            iniciarCuentaRegresiva(); 
+        });
+
+        function iniciarCuentaRegresiva() {
+            const fechaBoda = new Date(2026, 10, 15, 17, 0, 0).getTime();
+
+            const intervalo = setInterval(function() {
+                const ahora = new Date().getTime();
+                const distancia = fechaBoda - ahora;
+
+                const dias = Math.floor(distancia / (1000 * 60 * 60 * 24));
+                const horas = Math.floor((distancia % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutos = Math.floor((distancia % (1000 * 60 * 60)) / (1000 * 60));
+                const segundos = Math.floor((distancia % (1000 * 60)) / 1000);
+
+                document.getElementById("days").innerText = dias < 10 ? "0" + dias : dias;
+                document.getElementById("hours").innerText = horas < 10 ? "0" + horas : horas;
+                document.getElementById("minutes").innerText = minutos < 10 ? "0" + minutos : minutos;
+                document.getElementById("seconds").innerText = segundos < 10 ? "0" + segundos : segundos;
+
+                if (distancia < 0) {
+                    clearInterval(intervalo);
+                    document.getElementById("countdown-container").innerHTML = "<h3 style='font-family: var(--fuente-titulos); color: var(--color-primario);'>¡Llegó el gran día!</h3>";
+                }
+            }, 1000);
+        }
+
+        const audio = document.getElementById('bg-music');
+        const musicBtn = document.getElementById('music-btn');
+        let isPlaying = false;
+
+        function openInvitation() {
+            const envelopeScreen = document.getElementById('envelope-screen');
+            const envelopeWrapper = document.getElementById('envelope');
+            const content = document.getElementById('invitation-content');
+
+            envelopeWrapper.classList.add('open');
+
+            audio.play().then(() => {
+                isPlaying = true;
+                musicBtn.style.display = 'flex';
+                musicBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
+            }).catch(e => console.log("Autoplay evitado por el navegador."));
+
+            setTimeout(() => {
+                envelopeScreen.style.opacity = '0';
+                setTimeout(() => {
+                    envelopeScreen.style.visibility = 'hidden';
+                    envelopeScreen.style.display = 'none';
+                    content.style.display = 'block';
+                    setTimeout(() => {
+                        content.style.opacity = '1';
+                    }, 50);
+                }, 1000);
+            }, 1200); 
+        }
+
+        function toggleMusic() {
+            if (isPlaying) {
+                audio.pause();
+                musicBtn.innerHTML = '<i class="fas fa-volume-mute"></i>';
+            } else {
+                audio.play();
+                musicBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
+            }
+            isPlaying = !isPlaying;
+        }
+
+        function openModal(id) {
+            document.getElementById(id).classList.add('active');
+            history.pushState({ modal: id }, "", "#" + id);
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('active');
+        }
+
+        function openLightbox(src) {
+            document.getElementById('lightbox-img').src = src;
+            openModal('lightbox-modal');
+        }
+
+        function closeLightbox() {
+            closeModal('lightbox-modal');
+        }
+
+        window.addEventListener('popstate', function(event) {
+            const modalesActivos = document.querySelectorAll('.modal.active');
+            modalesActivos.forEach(modal => {
+                modal.classList.remove('active');
+            });
+        });
+
+    </script>
+</body>
+</html>
